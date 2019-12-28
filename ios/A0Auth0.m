@@ -112,22 +112,6 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
         #endif
         self.authenticationSession = authenticationSession;
         [(ASWebAuthenticationSession*) self.authenticationSession start];
-    } else if (@available(iOS 11.0, *)) {
-        self.authenticationSession = [[SFAuthenticationSession alloc]
-                                      initWithURL:url callbackURLScheme:callbackURLScheme
-                                      completionHandler:^(NSURL * _Nullable callbackURL,
-                                                          NSError * _Nullable error) {
-                                          if ([[error domain] isEqualToString:SFAuthenticationErrorDomain] &&
-                                              [error code] == SFAuthenticationErrorCanceledLogin) {
-                                              callback(@[ERROR_CANCELLED, [NSNull null]]);
-                                          } else if(error) {
-                                              callback(@[error, [NSNull null]]);
-                                          } else if(callbackURL) {
-                                              callback(@[[NSNull null], callbackURL.absoluteString]);
-                                          }
-                                          self.authenticationSession = nil;
-                                      }];
-        [(SFAuthenticationSession*) self.authenticationSession start];
     }
 }
 
